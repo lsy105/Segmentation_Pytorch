@@ -44,7 +44,9 @@ def train_net(net,
                           momentum=0.9,
                           weight_decay=0.0005)
     scheduler = optim.lr_scheduler.StepLR(optimizer, lr_step)
-    criterion = nn.CrossEntropyLoss()
+    cls_weight = torch.ones(21)
+    cls_weight[0] = 0.1
+    criterion = nn.CrossEntropyLoss(weight=cls_weight)
     for epoch in range(epochs):
         scheduler.step()
         print('Starting epoch {}/{}.'.format(epoch + 1, epochs))
@@ -64,7 +66,6 @@ def train_net(net,
            # masks_probs_flat = masks_probs.view(-1)
 
            # true_masks_flat = true_masks.view(-1)
-
             loss = criterion(masks_pred, true_masks.long())
             epoch_loss += loss.item()
 
